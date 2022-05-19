@@ -1,0 +1,105 @@
+package servlet;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Period;
+import java.util.LinkedList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import entities.Especialidad;
+import entities.Paciente;
+import entities.Profesional;
+import entities.Turnos;
+import logic.ComunicacionDb;
+import logic.EspecialidadesController;
+
+@WebServlet({ "/BuscarTurno", "/buscarturno", "/buscarTurno", "/BUSCARTURNO" })
+public class BuscarTurno extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+  
+    public BuscarTurno() {
+        super();
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		LinkedList<Turnos> turnos = new LinkedList<>();
+		LinkedList<Especialidad> especialidades = new LinkedList<>();
+		EspecialidadesController espCtrl = new EspecialidadesController();
+		ComunicacionDb ctrl = new ComunicacionDb();
+		Profesional prof = new Profesional();
+		Paciente pac = new Paciente();
+		LocalDate initialDate = LocalDate.now().plusDays(7);
+		LocalDate finalDate = initialDate.plus(Period.ofDays(5));
+		LocalDate currentDate = initialDate;
+		LocalTime finishTime;
+		LocalTime time;
+		
+		String mat = request.getParameter("nro_matricula"); 		
+		
+		if (mat.equals("0")) {
+			try {
+				especialidades = espCtrl.getAll();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			request.setAttribute("especialidades", especialidades);
+			request.getRequestDispatcher("WEB-INF/elegirEspecialidad.jsp").forward(request, response);
+		}
+		
+		else {
+			prof.setMatricula(mat);
+			
+		/*try {
+			turnos = ctrl.getTurnos(prof);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} */
+		
+		try {
+			prof = ctrl.getProfesional(prof);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finishTime = LocalTime.of(prof.getHora_fin().getHour(), prof.getHora_fin().getMinute());
+
+		while( currentDate.isAfter(finalDate) == false ) {
+			time = LocalTime.of(prof.getHora_inicio().getHour(), prof.getHora_inicio().getMinute());
+
+			if ( currentDate.getDayOfWeek().getValue() != 7 ){
+				while ( time.isAfter(finishTime) == false ) {
+					Turnos t = new Turnos();
+					t.setFecha_turno(currentDate);
+					t.setHora_turno(time);				
+					turnos.add(t);
+					time = time.plusMinutes(30);
+				}
+			}
+			currentDate = currentDate.plusDays(1);
+		}
+		
+		HttpSession session = request.getSession();
+		pac = (Paciente) session.getAttribute("usuario");
+		
+		request.setAttribute("paciente", pac);
+		request.setAttribute("turnosDisponibles", turnos);
+		request.setAttribute("profesional", prof);
+		request.getRequestDispatcher("WEB-INF/turnosDisponibles.jsp").forward(request, response); 
+		
+		} //fin del else
+	}
+
+}
