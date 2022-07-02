@@ -96,7 +96,6 @@ public class BuscarTurno extends HttpServlet {
 		pac = (Paciente) session.getAttribute("usuario");
 		
 		request.setAttribute("paciente", pac);
-		//request.setAttribute("id_paciente", id_paciente);
 		request.setAttribute("turnosDisponibles", turnos);
 		request.setAttribute("profesional", prof);
 		request.getRequestDispatcher("WEB-INF/turnosDisponibles.jsp").forward(request, response); 
