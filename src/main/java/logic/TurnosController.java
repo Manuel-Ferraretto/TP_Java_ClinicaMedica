@@ -1,5 +1,6 @@
 package logic;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 
 import dataBase.DataTurnos;
@@ -25,6 +26,10 @@ public class TurnosController {
 	
 	public LinkedList<Turnos> getAllTurnosPacienteActual(Paciente p){
 		return  dt.getAllTurnosPacienteActual(p);
+	}
+	
+	public Boolean validateAvailability(Turnos t) throws SQLException {
+		return dt.validateAvailability(t);
 	}
 
 }

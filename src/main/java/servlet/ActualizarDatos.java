@@ -48,8 +48,13 @@ public class ActualizarDatos extends HttpServlet {
 		p = (Paciente) session.getAttribute("usuario");
 		pac.setId(p.getId());
 		pac.setEmail(request.getParameter("email"));
+		if (pac.getEmail()==null) {pac.setEmail(p.getEmail());}
+		
 		pac.setPassword(request.getParameter("password"));
+		if (pac.getPassword()==null) {pac.setPassword(p.getPassword());}
+		
 		pac.setNum_tel(request.getParameter("numtel"));
+		if (pac.getNum_tel()==null) {pac.setNum_tel(p.getNum_tel());}
 		
 		try {
 			ctrl.actualizarDatosPaciente(pac);

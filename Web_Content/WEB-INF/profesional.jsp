@@ -30,9 +30,16 @@ LinkedList<Profesional> lp = (LinkedList<Profesional>)request.getAttribute("list
       <form action="ProfesionalesServlet" method="POST">
         <input class="btn btn-success" type="submit" name="accion" value="agregar">
       </form>
+     <br>
   </div>
+  
+    <div class="search-container">
+      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Ingrese nombre de la especialidad">
+    </div>
+      <br>
+      
     <div class="table-responsive">
-    <table class="table">
+    <table class="table" id="myTable">
       <thead>
         <tr class="table-info">
         <th scope="col">Matricula</th>
@@ -76,7 +83,29 @@ LinkedList<Profesional> lp = (LinkedList<Profesional>)request.getAttribute("list
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+	<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
 
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[3];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
 
 
 </body>

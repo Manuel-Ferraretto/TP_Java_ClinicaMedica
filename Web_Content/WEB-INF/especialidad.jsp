@@ -27,7 +27,7 @@
 	<br>
       <form action="EspecialidadesServlet" method="POST">
         <input class="btn btn-success" type="submit" name="accion" value="agregar">
-      </form>
+      </form>     
   </div>
     <div class="table-responsive">
     <table class="table">

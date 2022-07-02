@@ -20,6 +20,7 @@ import entities.Profesional;
 import entities.Turnos;
 import logic.ComunicacionDb;
 import logic.EspecialidadesController;
+import logic.TurnosController;
 
 @WebServlet({ "/BuscarTurno", "/buscarturno", "/buscarTurno", "/BUSCARTURNO" })
 public class BuscarTurno extends HttpServlet {
@@ -38,6 +39,7 @@ public class BuscarTurno extends HttpServlet {
 		LinkedList<Turnos> turnos = new LinkedList<>();
 		LinkedList<Especialidad> especialidades = new LinkedList<>();
 		EspecialidadesController espCtrl = new EspecialidadesController();
+		TurnosController turnosCtrl = new TurnosController();
 		ComunicacionDb ctrl = new ComunicacionDb();
 		Profesional prof = new Profesional();
 		Paciente pac = new Paciente();
@@ -46,9 +48,9 @@ public class BuscarTurno extends HttpServlet {
 		LocalDate currentDate = initialDate;
 		LocalTime finishTime;
 		LocalTime time;
-		
-		String mat = request.getParameter("nro_matricula"); 		
-		
+		String mat = request.getParameter("nro_matricula");
+		Boolean availability;
+	
 		if (mat.equals("0")) {
 			try {
 				especialidades = espCtrl.getAll();
@@ -62,12 +64,6 @@ public class BuscarTurno extends HttpServlet {
 		else {
 			prof.setMatricula(mat);
 			
-		/*try {
-			turnos = ctrl.getTurnos(prof);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} */
-		
 		try {
 			prof = ctrl.getProfesional(prof);
 		} catch (SQLException e) {
@@ -79,12 +75,17 @@ public class BuscarTurno extends HttpServlet {
 		while( currentDate.isAfter(finalDate) == false ) {
 			time = LocalTime.of(prof.getHora_inicio().getHour(), prof.getHora_inicio().getMinute());
 
-			if ( currentDate.getDayOfWeek().getValue() != 7 ){
+			if ( currentDate.getDayOfWeek().getValue() != 6 && currentDate.getDayOfWeek().getValue() != 7 ){
 				while ( time.isAfter(finishTime) == false ) {
 					Turnos t = new Turnos();
 					t.setFecha_turno(currentDate);
-					t.setHora_turno(time);				
-					turnos.add(t);
+					t.setHora_turno(time);	
+					try {
+						availability = turnosCtrl.validateAvailability(t);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					if (availability == true) {turnos.add(t);}
 					time = time.plusMinutes(30);
 				}
 			}
@@ -95,6 +96,7 @@ public class BuscarTurno extends HttpServlet {
 		pac = (Paciente) session.getAttribute("usuario");
 		
 		request.setAttribute("paciente", pac);
+		//request.setAttribute("id_paciente", id_paciente);
 		request.setAttribute("turnosDisponibles", turnos);
 		request.setAttribute("profesional", prof);
 		request.getRequestDispatcher("WEB-INF/turnosDisponibles.jsp").forward(request, response); 

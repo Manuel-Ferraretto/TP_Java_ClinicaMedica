@@ -48,7 +48,7 @@ public class NuevaCuenta extends HttpServlet {
 		
 		
 		
-		doGet(request, response);
+
 	}
 
 }

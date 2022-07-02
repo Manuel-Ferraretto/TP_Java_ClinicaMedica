@@ -52,8 +52,10 @@ public class ObrasSocialesServlet extends HttpServlet {
 			request.setAttribute("listaObrasSociales", obrasSociales);
 			request.setAttribute("retro", request.getAttribute("estado"));
 			request.getRequestDispatcher("WEB-INF/obraSocial.jsp").forward(request, response);
+			
 	}else if (accion.equalsIgnoreCase("agregar")) {
 		request.getRequestDispatcher("WEB-INF/addObraSocial.jsp").forward(request, response);
+		
 	} else if (accion.equalsIgnoreCase("Add")) {
 		ObraSocial ob = new ObraSocial();
 		ObrasSocialesController obc = new ObrasSocialesController();
@@ -94,7 +96,7 @@ public class ObrasSocialesServlet extends HttpServlet {
 			request.setAttribute("estado", "obra social actualizada correctamente.");
 			request.getRequestDispatcher("ObrasSocialesServlet?accion=listar").forward(request, response);
 		}else {
-			request.setAttribute("estado", "No se puedo actualizar.Ya existe obra social con ese nombre");
+			request.setAttribute("estado", "No se puede actualizar.Ya existe obra social con ese nombre");
 			request.getRequestDispatcher("ObrasSocialesServlet?accion=Listar").forward(request, response);
 		}
 	}else if(accion.equalsIgnoreCase("Eliminar")) {
@@ -129,6 +131,7 @@ public class ObrasSocialesServlet extends HttpServlet {
 		request.setAttribute("listaespecialidades", especialidades);
 		request.setAttribute("retro", request.getAttribute("estado"));
 		request.getRequestDispatcher("WEB-INF/especialidad_obrasocial.jsp").forward(request, response);
+		
 	}else if(accion.equalsIgnoreCase("EliminarEspecialidad")) {
 		Especialidad_ObralSocial espob =new Especialidad_ObralSocial();
 		ObrasSocialesController obc=new ObrasSocialesController();
@@ -137,6 +140,7 @@ public class ObrasSocialesServlet extends HttpServlet {
 		obc.deleteMiEspecialidad(espob);
 		request.setAttribute("estado", "especialidad eliminada correctamente de la obra social.");
 		request.getRequestDispatcher("ObrasSocialesServlet?accion=listar").forward(request, response);
+		
 	}else if(accion.equalsIgnoreCase("AgregarEspecialidad")) {
 		Especialidad_ObralSocial espob =new Especialidad_ObralSocial();
 		ObrasSocialesController obc=new ObrasSocialesController();
